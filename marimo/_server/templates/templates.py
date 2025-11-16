@@ -42,6 +42,42 @@ def json_script(data: Any) -> str:
     return json.dumps(data, sort_keys=True).translate(_json_script_escapes)
 
 
+def get_mount_config_dict(
+    *,
+    filename: Optional[str],
+    mode: Literal["edit", "home", "read"],
+    server_token: SkewProtectionToken,
+    user_config: MarimoConfig,
+    config_overrides: PartialMarimoConfig,
+    app_config: Optional[_AppConfig],
+    version: Optional[str] = None,
+    show_app_code: bool = True,
+    session_snapshot: Optional[NotebookSessionV1] = None,
+    notebook_snapshot: Optional[NotebookV1] = None,
+    remote_url: Optional[str] = None,
+) -> dict[str, Any]:
+    """
+    Return mount configuration as a dictionary.
+    """
+    return {
+        "filename": filename or "",
+        "mode": mode,
+        "version": version or get_version(),
+        "serverToken": str(server_token),
+        "config": user_config,
+        "configOverrides": config_overrides,
+        "appConfig": _del_none_or_empty(app_config.asdict())
+        if app_config
+        else {},
+        "view": {
+            "showAppCode": show_app_code,
+        },
+        "notebook": notebook_snapshot,
+        "session": session_snapshot,
+        "runtimeConfig": [{"url": remote_url}] if remote_url else None,
+    }
+
+
 def _get_mount_config(
     *,
     filename: Optional[str],
@@ -60,36 +96,32 @@ def _get_mount_config(
     Return a JSON string with custom indentation and sorting.
     """
 
-    options: dict[str, Any] = {
-        "filename": filename or "",
-        "mode": mode,
-        "version": version or get_version(),
-        "server_token": str(server_token),
-        "user_config": user_config,
-        "config_overrides": config_overrides,
-        "app_config": _del_none_or_empty(app_config.asdict())
-        if app_config
-        else {},
-        "view": {
-            "showAppCode": show_app_code,
-        },
-        "notebook": notebook_snapshot,
-        "session": session_snapshot,
-        "runtime_config": [{"url": remote_url}] if remote_url else None,
-    }
+    options = get_mount_config_dict(
+        filename=filename,
+        mode=mode,
+        server_token=server_token,
+        user_config=user_config,
+        config_overrides=config_overrides,
+        app_config=app_config,
+        version=version,
+        show_app_code=show_app_code,
+        session_snapshot=session_snapshot,
+        notebook_snapshot=notebook_snapshot,
+        remote_url=remote_url,
+    )
 
     return """{{
             "filename": {filename},
             "mode": {mode},
             "version": {version},
-            "serverToken": {server_token},
-            "config": {user_config},
-            "configOverrides": {config_overrides},
-            "appConfig": {app_config},
+            "serverToken": {serverToken},
+            "config": {config},
+            "configOverrides": {configOverrides},
+            "appConfig": {appConfig},
             "view": {view},
             "notebook": {notebook},
             "session": {session},
-            "runtimeConfig": {runtime_config},
+            "runtimeConfig": {runtimeConfig},
         }}
 """.format(**{k: json_script(v) for k, v in options.items()}).strip()
 

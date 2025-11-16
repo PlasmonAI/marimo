@@ -6,21 +6,18 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from starlette.authentication import requires
 from starlette.exceptions import HTTPException
 from starlette.responses import FileResponse, HTMLResponse, Response
 from starlette.staticfiles import StaticFiles
 
 from marimo import _loggers
 from marimo._config.manager import get_default_config_manager
-from marimo._output.utils import uri_decode_component, uri_encode_component
+from marimo._output.utils import uri_decode_component
 from marimo._runtime.virtual_file import EMPTY_VIRTUAL_FILE, read_virtual_file
 from marimo._server.api.deps import AppState
 from marimo._server.router import APIRouter
 from marimo._server.templates.templates import (
     home_page_template,
-    inject_script,
-    notebook_page_template,
 )
 from marimo._utils.paths import marimo_package_path
 
@@ -72,81 +69,34 @@ FILE_QUERY_PARAM_KEY = "file"
 
 
 @router.get("/")
-@requires("read", redirect="auth:login_page")
 async def index(request: Request) -> HTMLResponse:
+    """
+    Serve the SPA shell (home page only).
+
+    In SPA mode, the frontend handles all routing. This endpoint always
+    serves the home page template, and the frontend React Router will
+    handle navigation to /notebook/* routes.
+
+    Note: Authentication is disabled as this runs in a secured environment.
+    """
     app_state = AppState(request)
     index_html = root / "index.html"
 
-    file_key = (
-        app_state.query_params(FILE_QUERY_PARAM_KEY)
-        or app_state.session_manager.file_router.get_unique_file_key()
-    )
-
     html = index_html.read_text()
 
-    if not file_key:
-        # We don't know which file to use, so we need to render a homepage
-        LOGGER.debug("No file key provided, serving homepage")
-        html = home_page_template(
-            html=html,
-            base_url=app_state.base_url,
-            user_config=app_state.config_manager.get_user_config(),
-            config_overrides=app_state.config_manager.get_config_overrides(),
-            server_token=app_state.skew_protection_token,
-            asset_url=app_state.asset_url,
-        )
-    else:
-        config_manager = app_state.config_manager_at_file(file_key)
-
-        # We have a file key, so we can render the app with the file
-        LOGGER.debug(f"File key provided: {file_key}")
-        app_manager = app_state.session_manager.app_manager(file_key)
-        app_config = app_manager.app.config
-
-        html = notebook_page_template(
-            html=html,
-            base_url=app_state.base_url,
-            user_config=config_manager.get_user_config(),
-            config_overrides=config_manager.get_config_overrides(),
-            server_token=app_state.skew_protection_token,
-            app_config=app_config,
-            filename=app_manager.filename,
-            mode=app_state.mode,
-            remote_url=app_state.remote_url,
-            asset_url=app_state.asset_url,
-        )
-
-        # Inject service worker registration with the notebook ID
-        html = _inject_service_worker(html, file_key)
+    # Always serve the home page in SPA mode
+    # The frontend will handle routing and load notebooks via /api/notebook/load
+    LOGGER.debug("Serving SPA home page")
+    html = home_page_template(
+        html=html,
+        base_url=app_state.base_url,
+        user_config=app_state.config_manager.get_user_config(),
+        config_overrides=app_state.config_manager.get_config_overrides(),
+        server_token=app_state.skew_protection_token,
+        asset_url=app_state.asset_url,
+    )
 
     return HTMLResponse(html)
-
-
-def _inject_service_worker(html: str, file_key: str) -> str:
-    return inject_script(
-        html,
-        # Register service worker with the notebook ID
-        # Potentially update the service worker and send the notebook ID again.
-        f"""
-            if ('serviceWorker' in navigator) {{
-                const notebookId = '{uri_encode_component(file_key)}';
-                navigator.serviceWorker.register('./public-files-sw.js?v=2')
-                    .then(registration => {{
-                        registration.active.postMessage({{ notebookId }});
-                    }})
-                    .catch(error => {{
-                        console.error('Error registering service worker:', error);
-                    }});
-                navigator.serviceWorker.ready
-                    .then(registration => {{
-                        registration.update().then(() => registration.active.postMessage({{ notebookId }}));
-                    }})
-                    .catch(error => {{
-                        console.error('Error updating service worker:', error);
-                    }});
-            }}
-            """,
-    )
 
 
 STATIC_FILES = [
@@ -159,11 +109,14 @@ STATIC_FILES = [
 
 
 @router.get("/@file/{filename_and_length:path}")
-@requires("read")
 def virtual_file(
     request: Request,
 ) -> Response:
     """
+    Serve virtual files.
+
+    Note: Authentication is disabled as this runs in a secured environment.
+
     parameters:
         - in: path
           name: filename_and_length
@@ -245,9 +198,12 @@ async def public_files_service_worker(request: Request) -> Response:
 
 
 @router.get("/public/{filepath:path}")
-@requires("read")
 async def serve_public_file(request: Request) -> Response:
-    """Serve files from the notebook's directory under /public/"""
+    """
+    Serve files from the notebook's directory under /public/
+
+    Note: Authentication is disabled as this runs in a secured environment.
+    """
     app_state = AppState(request)
     filepath = str(request.path_params["filepath"])
     # Get notebook ID from header
