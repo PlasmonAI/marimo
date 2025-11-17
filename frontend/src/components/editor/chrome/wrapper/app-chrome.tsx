@@ -7,7 +7,6 @@ import {
   PanelResizeHandle,
 } from "react-resizable-panels";
 import { Footer } from "./footer";
-import { Sidebar } from "./sidebar";
 import "./app-chrome.css";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { XIcon } from "lucide-react";

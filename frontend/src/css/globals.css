@@ -41,8 +41,10 @@
   :root,
   .marimo {
     --monospace-font: var(--marimo-monospace-font, "Fira Mono", monospace);
-    --text-font: var(--marimo-text-font, "PT Sans", sans-serif);
-    --heading-font: var(--marimo-heading-font, "Lora", serif);
+    /* Updated to use bundled Univers Next Pro fonts for all text */
+    --text-font: var(--marimo-text-font, "Univers Next Pro", "Helvetica Neue", "Arial", sans-serif);
+    /* Updated to use Univers Next Pro for headings instead of Didot */
+    --heading-font: var(--marimo-heading-font, "Univers Next Pro", "Helvetica Neue", "Arial", sans-serif);
     --radius: 8px;
     /* stylelint-disable-next-line unit-allowed-list */
     --markdown-max-width: 80ch;
@@ -51,50 +53,50 @@
 
     /* Radix dark colors: https://github.com/radix-ui/colors/blob/main/src/dark.ts */
 
-    /* Base colors. */
-    --background: light-dark(hsl(0deg 0% 100%), hsl(150deg 7.7% 10.2%));
-    --foreground: light-dark(hsl(222.2deg 47.4% 11.2%), hsl(155deg 7% 93%));
-    --muted: light-dark(hsl(210deg 40% 96.1%), hsl(180deg 14% 1%));
+    /* Base colors - Updated from DESIGN_TOKENS.md */
+    --background: light-dark(#FFFFFF, #082321);
+    --foreground: light-dark(rgba(0, 0, 0, 0.87), #F4F4F4);
+    --muted: light-dark(#F5F5F5, #00494B);
     --muted-foreground: light-dark(
-      hsl(215.4deg 16.3% 46.9%),
-      hsl(155deg 5% 68.3%)
+      #666666,
+      #E8E8E8
     );
-    --popover: light-dark(hsl(0deg 0% 100%), hsl(151deg 5.5% 15.2%));
+    --popover: light-dark(#FFFFFF, #00494B);
     --popover-foreground: light-dark(
-      hsl(222.2deg 47.4% 11.2%),
-      hsl(155deg 5% 68.3%)
+      rgba(0, 0, 0, 0.87),
+      #F4F4F4
     );
-    --card: light-dark(hsl(0deg 0% 100%), hsl(151deg 5.5% 15.2%));
+    --card: light-dark(#FFFFFF, #00494B);
     --card-foreground: light-dark(
-      hsl(222.2deg 47.4% 11.2%),
-      hsl(155deg 5% 76.3%)
+      rgba(0, 0, 0, 0.87),
+      #F4F4F4
     );
-    --border: light-dark(hsl(214.3deg 31.8% 91.4%), hsl(153deg 3.7% 24.2%));
-    --input: light-dark(hsl(0deg 0% 64%), hsl(154deg 3.3% 28.7%));
-    --primary: light-dark(hsl(208deg 93.5% 47.4%), hsl(192deg 59.8% 39%));
-    --primary-foreground: light-dark(hsl(210deg 40% 98%), hsl(190deg 80% 84%));
-    --secondary: light-dark(hsl(210deg 40% 96.1%), hsl(155deg 7% 93%));
+    --border: light-dark(#E8E8E8, #515151);
+    --input: light-dark(#E8E8E8, #515151);
+    --primary: light-dark(#0A5F61, #0A5F61);
+    --primary-foreground: light-dark(#FFFFFF, #FFFFFF);
+    --secondary: light-dark(rgba(0, 0, 0, 0.6), #E8E8E8);
     --secondary-foreground: light-dark(
-      hsl(222.2deg 47.4% 11.2%),
-      hsl(151deg 5.5% 15.2%)
+      rgba(0, 0, 0, 0.87),
+      #082321
     );
-    --accent: light-dark(hsl(209deg 100% 96.5%), hsl(192deg 56.6% 26.5%));
-    --accent-foreground: light-dark(hsl(211deg 90% 42%), hsl(190deg 80% 84%));
-    --ring: hsl(215deg 20.2% 65.1%);
+    --accent: light-dark(#EBB356, #B07594);
+    --accent-foreground: light-dark(rgba(0, 0, 0, 0.87), #FFFFFF);
+    --ring: light-dark(#0A5F61, #B3C8C9);
 
-    /* Semantic colors. */
-    --destructive: hsl(0deg 100% 70%);
-    --destructive-foreground: hsl(210deg 40% 98%);
-    --error: hsl(0deg 77% 64%);
-    --error-foreground: hsl(210deg 40% 98%);
+    /* Semantic colors - Updated from DESIGN_TOKENS.md */
+    --destructive: #CB323B;
+    --destructive-foreground: #FFFFFF;
+    --error: #CB323B;
+    --error-foreground: #FFFFFF;
     --success: hsl(130deg 100% 70%);
-    --success-foreground: hsl(210deg 40% 98%);
-    --action: hsl(52deg 96.8% 82%);
-    --action-hover: hsl(54deg 100% 86.7%);
-    --action-foreground: hsl(42deg 100% 29%);
-    --link: light-dark(hsl(211deg 90% 42%), hsl(211deg 90% 62%));
-    --link-visited: light-dark(hsl(272deg 51% 54%), hsl(272deg 51% 74%));
-    --stale: hsl(42deg 56% 44% / 25%);
+    --success-foreground: #FFFFFF;
+    --action: #EBB356;
+    --action-hover: #F2F6F6;
+    --action-foreground: rgba(0, 0, 0, 0.87);
+    --link: light-dark(#0A5F61, #B3C8C9);
+    --link-visited: light-dark(#8A4F6E, #B07594);
+    --stale: rgba(0, 73, 75, 0.3);
 
     /* Base shadows. */
     --base-shadow: light-dark(hsl(0deg 0% 85% / 40%), hsla(0deg 0% 36% / 60%));
