@@ -142,7 +142,7 @@ font-family: 'Univers Next W01 Regular';
   /* Override marimo fonts */
   --marimo-text-font: "Univers Next W01 Regular", sans-serif;
   --marimo-heading-font: "Didot", serif;
-  --marimo-monospace-font: "Fira Mono", monospace;
+  --marimo-monospace-font: "Univers Next Pro", "Helvetica Neue", "Arial", sans-serif;
 }
 
 /* Light theme colors */

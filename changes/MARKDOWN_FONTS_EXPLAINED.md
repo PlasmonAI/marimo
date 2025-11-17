@@ -58,7 +58,13 @@ typography: {
 **File**: [frontend/src/css/globals.css:43](frontend/src/css/globals.css:43)
 
 ```css
---monospace-font: var(--marimo-monospace-font, "Fira Mono", monospace);
+--monospace-font: var(
+  --marimo-monospace-font,
+  "Univers Next Pro",
+  "Helvetica Neue",
+  "Arial",
+  sans-serif
+);
 ```
 
 ---
@@ -95,7 +101,7 @@ typography: {
 | Priority | Font Name | Type | Notes |
 |----------|-----------|------|-------|
 | 1 | **User Override** | Custom | Via `--marimo-monospace-font` CSS variable |
-| 2 | **Fira Mono** | Monospace | Built-in, clear distinction between characters |
+| 2 | **Univers Next Pro** | Monospace replacement | Unified with rest of UI |
 | 3 | **monospace** | Generic | Browser default monospace |
 
 ---
@@ -208,7 +214,7 @@ While not recommended, you can use inline styles:
 
 4. **[frontend/src/css/app/fonts.css](frontend/src/css/app/fonts.css)**
    - Declares `@font-face` for bundled fonts
-   - Loads Fira Mono, PT Sans (old), Lora (old)
+   - Loads Univers Next Pro, PT Sans (old), Lora (old)
 
 ---
 
@@ -271,12 +277,12 @@ Markdown Cell
 │   └── Defined in: tailwind.config.cjs typography
 │
 ├── Code (inline `code`)
-│   └── Font: Fira Mono → monospace
+│   └── Font: Univers Next Pro → Helvetica Neue → Arial → sans-serif
 │   └── Weight: 500
 │   └── Defined in: globals.css
 │
 └── Code Blocks (```code```)
-    └── Font: Fira Mono → monospace
+    └── Font: Univers Next Pro → Helvetica Neue → Arial → sans-serif
     └── Weight: 400
     └── Defined in: globals.css + CodeMirror theme
 
@@ -325,7 +331,7 @@ Standard markdown styling with same font family.
 |---------|-------------|---------------------------|-------------|
 | **Markdown Headings** | `var(--heading-font)` | Didot / Palatino / Georgia | [md.css:41](frontend/src/css/md.css:41) |
 | **Markdown Body** | `var(--text-font)` | Univers Next W01 / Helvetica Neue / Arial | [tailwind.config.cjs:142](frontend/tailwind.config.cjs:142) |
-| **Markdown Code** | `var(--monospace-font)` | Fira Mono | [globals.css:43](frontend/src/css/globals.css:43) |
+| **Markdown Code** | `var(--monospace-font)` | Univers Next Pro | [globals.css:43](frontend/src/css/globals.css:43) |
 | **Links** | `var(--text-font)` | Univers Next W01 / Helvetica Neue / Arial | [md.css:44-48](frontend/src/css/md.css:44-48) |
 
 ---

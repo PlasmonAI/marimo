@@ -377,26 +377,13 @@ class MarimoIslandGenerator:
         # This loads:
         # - The marimo islands js
         # - The marimo islands css
-        # - Preconnects to Google Fonts (https://stackoverflow.com/questions/73838138)
-        # - Fonts from Google Fonts
-        #   (otherwise they would get bundled in the css)
         # - Fonts from KaTeX
         #   (otherwise they would get bundled in the css)
 
         base_url = f"https://cdn.jsdelivr.net/npm/@marimo-team/islands@{version_override}"
-        # This should be kept in sync fonts.css in the frontend
-        # Since this is embedded on other pages, we want display=swap
-        # for the most compatible font loading
-        font_url = "https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&amp;family=Lora&amp;family=PT+Sans:wght@400;700&amp;display=swap"
-
-        fonts = f"""
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link
-                rel="preconnect"
-                href="https://fonts.gstatic.com"
-                crossorigin
-            />
-            <link href="{font_url}" rel="stylesheet" />
+        # This should be kept in sync with the frontend font stack
+        # We only load KaTeX here; application fonts ship with the CSS bundle.
+        fonts = """
             <link
                 rel="stylesheet"
                 href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"

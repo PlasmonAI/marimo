@@ -26,25 +26,28 @@ see frontend/src/core/static/download-html.ts */
 }
 
 @font-face {
-  font-family: "Fira Mono";
+  font-family: "Univers Next Pro";
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("../../fonts/Fira_Mono/FiraMono-Regular.ttf") format("truetype");
+  src: url("../../assets/univers-next-pro/UniversNextProRegular.ttf")
+    format("truetype");
 }
 
 @font-face {
-  font-family: "Fira Mono";
+  font-family: "Univers Next Pro";
   font-style: normal;
   font-weight: 500;
   font-display: block;
-  src: url("../../fonts/Fira_Mono/FiraMono-Medium.ttf") format("truetype");
+  src: url("../../assets/univers-next-pro/Univers Next Pro Medium.ttf")
+    format("truetype");
 }
 
 @font-face {
-  font-family: "Fira Mono";
+  font-family: "Univers Next Pro";
   font-style: normal;
   font-weight: 700;
   font-display: block;
-  src: url("../../fonts/Fira_Mono/FiraMono-Bold.ttf") format("truetype");
+  src: url("../../assets/univers-next-pro/UniversNextProBold.ttf")
+    format("truetype");
 }

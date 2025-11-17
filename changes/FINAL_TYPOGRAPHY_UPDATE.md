@@ -11,12 +11,12 @@ All text in marimo (body, headings, and UI) now uses **Univers Next Pro** exclus
 ### Before (Mixed Typography)
 - **Body text**: Univers Next Pro
 - **Headings (h1-h6)**: Didot → Palatino → Georgia (serif)
-- **Code**: Fira Mono
+- **Code**: Dedicated monospace stack
 
 ### After (Unified Typography)
 - **Body text**: Univers Next Pro ✅
 - **Headings (h1-h6)**: Univers Next Pro ✅ **NEW**
-- **Code**: Fira Mono (unchanged)
+- **Code**: Univers Next Pro ✅ **NEW**
 
 ---
 
@@ -45,7 +45,7 @@ All text in marimo (body, headings, and UI) now uses **Univers Next Pro** exclus
 
 ### Code/Monospace
 ```
-"Fira Mono" → system monospace
+"Univers Next Pro" → "Helvetica Neue" → "Arial" → system sans-serif
 ```
 
 ---
@@ -174,7 +174,6 @@ Body: Univers Next Pro (modern sans-serif)
 - ✅ Univers Next Pro Light.ttf (210.05 kB)
 - ✅ Univers Next Pro Heavy.ttf (195.66 kB)
 - ✅ Univers Next Pro Black.ttf (177.85 kB)
-- ✅ FiraMono (for code) ✅
 
 ### Fonts NO LONGER Needed:
 - ❌ Lora (old heading serif font)
@@ -186,7 +185,7 @@ Body: Univers Next Pro (modern sans-serif)
 
 ## Where Univers Next Pro Is Used
 
-### Everywhere (Except Code)
+### Everywhere
 
 | Element Type | Font Family | Font Weight | Example |
 |--------------|-------------|-------------|---------|
@@ -206,8 +205,6 @@ Body: Univers Next Pro (modern sans-serif)
 
 | Element Type | Font Family | Why |
 |--------------|-------------|-----|
-| **Code blocks** | Fira Mono | Monospace needed for code |
-| **Inline code** | Fira Mono | Monospace needed for code |
 | **Math (KaTeX)** | KaTeX fonts | Specialized math symbols |
 
 ---
@@ -324,7 +321,7 @@ Both should be the same!
 --heading-font: "Univers Next Pro", "Helvetica Neue", "Arial", sans-serif;
 
 /* Code only */
---monospace-font: "Fira Mono", monospace;
+--monospace-font: "Univers Next Pro", "Helvetica Neue", "Arial", sans-serif;
 ```
 
 ### Font Weights Available
@@ -385,9 +382,6 @@ h1, h2 { font-weight: 800; }       /* Heavy */
 │  • Font weight (Light → Black)          │
 │  • Font size (16px → 36px)              │
 │  • Color (Primary → Muted)              │
-│                                         │
-│  Exception: Code uses Fira Mono         │
-│                                         │
 └─────────────────────────────────────────┘
 ```
 

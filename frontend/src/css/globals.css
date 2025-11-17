@@ -40,7 +40,13 @@
 
   :root,
   .marimo {
-    --monospace-font: var(--marimo-monospace-font, "Fira Mono", monospace);
+    --monospace-font: var(
+      --marimo-monospace-font,
+      "Univers Next Pro",
+      "Helvetica Neue",
+      "Arial",
+      sans-serif
+    );
     /* Updated to use bundled Univers Next Pro fonts for all text */
     --text-font: var(--marimo-text-font, "Univers Next Pro", "Helvetica Neue", "Arial", sans-serif);
     /* Updated to use Univers Next Pro for headings instead of Didot */

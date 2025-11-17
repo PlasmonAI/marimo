@@ -11,9 +11,9 @@
     <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/Lora-VariableFont_wght.ttf"" as="font" crossorigin="anonymous" />
     <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/PTSans-Regular.ttf"" as="font" crossorigin="anonymous" />
     <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/PTSans-Bold.ttf"" as="font" crossorigin="anonymous" />
-    <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/FiraMono-Regular.ttf"" as="font" crossorigin="anonymous" />
-    <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/FiraMono-Medium.ttf"" as="font" crossorigin="anonymous" />
-    <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/FiraMono-Bold.ttf"" as="font" crossorigin="anonymous" />
+    <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/UniversNextProRegular.ttf"" as="font" crossorigin="anonymous" />
+    <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/Univers%20Next%20Pro%20Medium.ttf"" as="font" crossorigin="anonymous" />
+    <link rel="preload" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@marimo-team/frontend@0.0.0/dist/assets/UniversNextProBold.ttf"" as="font" crossorigin="anonymous" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />

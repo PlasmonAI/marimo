@@ -38,11 +38,12 @@ Successfully applied the design tokens from `DESIGN_TOKENS.md` to the marimo fro
 |----------|-----------|-----------|----------|
 | `--text-font` | `"PT Sans", sans-serif` | `"Univers Next W01 Regular", "Helvetica Neue", "Arial", sans-serif` | System sans-serif |
 | `--heading-font` | `"Lora", serif` | `"Didot", "Palatino", "Georgia", serif` | System serif |
-| `--monospace-font` | `"Fira Mono", monospace` | `"Fira Mono", monospace` | *Unchanged* |
+| `--monospace-font` | `Legacy monospace stack` | `"Univers Next Pro", "Helvetica Neue", "Arial", sans-serif` | System sans-serif |
 
 **Note**: Univers Next W01 and Didot are commercial fonts. The CSS now includes proper fallback fonts:
 - **Univers Next W01** → Helvetica Neue → Arial → system sans-serif
 - **Didot** → Palatino → Georgia → system serif
+- **Code/Monospace**: Univers Next Pro → Helvetica Neue → Arial → system sans-serif
 
 To use the actual fonts, users can:
 1. Purchase and install the fonts locally

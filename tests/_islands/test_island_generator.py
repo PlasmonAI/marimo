@@ -162,10 +162,6 @@ def test_render_head():
     assert (
         'href="https://cdn.jsdelivr.net/npm/@marimo-team/islands@' in head_html
     )
-    assert (
-        '<link rel="preconnect" href="https://fonts.googleapis.com" />'
-        in head_html
-    )
     assert 'href="https://cdn.jsdelivr.net/npm/katex@' in head_html
 
     snapshot("header.txt", head_html.replace(__version__, "0.0.0"))

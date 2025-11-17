@@ -360,13 +360,6 @@ In order to use marimo islands, you need to import the necessary JS/CSS headers 
     rel="stylesheet"
     crossorigin="anonymous"
   />
-  <!-- fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&amp;family=Lora&amp;family=PT+Sans:wght@400;700&amp;display=swap"
-    rel="stylesheet"
-  />
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"

@@ -360,7 +360,7 @@ theme:
     - search.suggest # search suggestions
     - toc.follow # auto-scroll TOC
   font:
-    code: Fira Mono
+    code: Univers Next Pro
     text: PT Sans
   logo: _static/marimo-logotype-horizontal.png
   name: material

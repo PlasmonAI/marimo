@@ -146,7 +146,6 @@ All marimo UI components (buttons, inputs, tables, etc.) use `--text-font`:
 ### 4. NOT Used For
 
 - **Headings** (h1-h6): Still use Didot/Palatino/Georgia serif
-- **Code**: Still use Fira Mono monospace
 - **Math**: Still use KaTeX fonts
 
 ---
@@ -163,7 +162,7 @@ All fonts use `font-display: block` which means:
 **Why block?**
 - Prevents FOUT (Flash of Unstyled Text)
 - Better reading experience
-- Consistent with other marimo fonts (Fira Mono, Lora)
+- Consistent with other marimo fonts (Univers Next Pro stack, Lora)
 
 ### Fallback Chain
 
