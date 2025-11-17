@@ -52,6 +52,8 @@ class TestNotebookPageTemplate(unittest.TestCase):
         self.html = index_html.read_text(encoding="utf-8")
 
         self.base_url = "/subpath"
+        self.absolute_base_url = "https://example.com/subpath"
+        self.absolute_base_url = "https://example.com/subpath"
         self.user_config: MarimoConfig = default_config
         self.config_overrides: PartialMarimoConfig = {}
         self.server_token = SkewProtectionToken("token")
@@ -66,6 +68,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -74,16 +77,20 @@ class TestNotebookPageTemplate(unittest.TestCase):
             self.mode,
         )
 
-        assert self.base_url not in result
+        assert "./assets" not in result
+        assert f"{self.absolute_base_url}/assets" in result
         assert str(self.server_token) in result
         assert self.filename.name in result
         assert "read" in result
+        # Check that <base> tag is present with correct href
+        assert f'<base href="{self.absolute_base_url}/">' in result
         _assert_no_leftover_replacements(result)
 
     def test_notebook_page_template_no_filename(self) -> None:
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -92,7 +99,8 @@ class TestNotebookPageTemplate(unittest.TestCase):
             self.mode,
         )
 
-        assert self.base_url not in result
+        assert "./assets" not in result
+        assert f"{self.absolute_base_url}/assets" in result
         assert str(self.server_token) in result
         assert "<title>marimo</title>" in result
         assert "read" in result
@@ -102,6 +110,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -110,7 +119,8 @@ class TestNotebookPageTemplate(unittest.TestCase):
             SessionMode.EDIT,
         )
 
-        assert self.base_url not in result
+        assert "./assets" not in result
+        assert f"{self.absolute_base_url}/assets" in result
         assert str(self.server_token) in result
         assert self.filename.name in result
         assert "edit" in result
@@ -126,6 +136,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -157,6 +168,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -185,6 +197,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             config,
             self.config_overrides,
             self.server_token,
@@ -238,6 +251,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             config_overrides,
             self.server_token,
@@ -258,6 +272,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             config,
             self.config_overrides,
             self.server_token,
@@ -277,6 +292,7 @@ class TestNotebookPageTemplate(unittest.TestCase):
         result = templates.notebook_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -314,18 +330,37 @@ class TestHomePageTemplate(unittest.TestCase):
         result = templates.home_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
         )
 
-        assert self.base_url not in result
+        assert "./assets" not in result
+        assert f"{self.absolute_base_url}/assets" in result
         assert str(self.server_token) in result
         assert json.dumps(self.user_config, sort_keys=True) in result
         assert "marimo" in result
         assert json.dumps({}) in result
         assert "" in result
         assert "home" in result
+        # Check that <base> tag is present with correct href
+        assert f'<base href="{self.absolute_base_url}/">' in result
+        _assert_no_leftover_replacements(result)
+
+    def test_home_page_template_with_empty_base_url(self) -> None:
+        """Test home page template with empty base_url (default)."""
+        result = templates.home_page_template(
+            self.html,
+            "",  # empty base_url
+            "https://example.com",
+            self.user_config,
+            self.config_overrides,
+            self.server_token,
+        )
+
+        # Check that <base> tag is present with root path
+        assert '<base href="https://example.com/">' in result
         _assert_no_leftover_replacements(result)
 
     def test_home_page_template_with_asset_url(self) -> None:
@@ -335,6 +370,7 @@ class TestHomePageTemplate(unittest.TestCase):
         result = templates.home_page_template(
             self.html,
             self.base_url,
+            self.absolute_base_url,
             self.user_config,
             self.config_overrides,
             self.server_token,
@@ -936,7 +972,9 @@ class TestReplaceAssetUrls(unittest.TestCase):
         html = """<link href="./assets/style.css" rel="stylesheet">
 <script src="./assets/app.js"></script>"""
 
-        result = templates._replace_asset_urls(html, "https://cdn.example.com")
+        result = templates._replace_asset_urls(
+            html, "", "https://cdn.example.com"
+        )
 
         assert (
             result
@@ -951,7 +989,7 @@ class TestReplaceAssetUrls(unittest.TestCase):
         html = """<link href="./assets/style.css" rel="stylesheet">"""
 
         result = templates._replace_asset_urls(
-            html, "https://cdn.example.com/v{version}"
+            html, "", "https://cdn.example.com/v{version}"
         )
 
         expected = f"""<link crossorigin="anonymous" href="https://cdn.example.com/v{__version__}/assets/style.css" rel="stylesheet">"""
@@ -961,7 +999,9 @@ class TestReplaceAssetUrls(unittest.TestCase):
         """Test asset URL replacement with double quotes."""
         html = '<link href="./assets/style.css" rel="stylesheet">'
 
-        result = templates._replace_asset_urls(html, "https://cdn.example.com")
+        result = templates._replace_asset_urls(
+            html, "", "https://cdn.example.com"
+        )
 
         assert (
             result

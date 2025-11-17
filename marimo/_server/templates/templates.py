@@ -97,12 +97,18 @@ def _get_mount_config(
 def home_page_template(
     html: str,
     base_url: str,
+    absolute_base_url: str,
     user_config: MarimoConfig,
     config_overrides: PartialMarimoConfig,
     server_token: SkewProtectionToken,
     asset_url: Optional[str] = None,
 ) -> str:
     html = html.replace("{{ base_url }}", base_url)
+    # Add <base> tag to fix relative asset paths when served behind proxy/iframe
+    html = html.replace(
+        "<head>",
+        f'<head>\n    <base href="{_format_base_href(base_url, absolute_base_url)}">',
+    )
     html = html.replace("{{ title }}", "marimo")
     html = html.replace("{{ filename }}", "")
 
@@ -113,7 +119,7 @@ def home_page_template(
     )
     html = html.replace("{{ server_token }}", str(server_token))
 
-    html = _replace_asset_urls(html, asset_url)
+    html = _replace_asset_urls(html, absolute_base_url, asset_url)
 
     html = html.replace(
         MOUNT_CONFIG_TEMPLATE,
@@ -137,6 +143,7 @@ def home_page_template(
 def notebook_page_template(
     html: str,
     base_url: str,
+    absolute_base_url: str,
     user_config: MarimoConfig,
     config_overrides: PartialMarimoConfig,
     server_token: SkewProtectionToken,
@@ -147,6 +154,11 @@ def notebook_page_template(
     asset_url: Optional[str] = None,
 ) -> str:
     html = html.replace("{{ base_url }}", base_url)
+    # Add <base> tag to fix relative asset paths when served behind proxy/iframe
+    html = html.replace(
+        "<head>",
+        f'<head>\n    <base href="{_format_base_href(base_url, absolute_base_url)}">',
+    )
 
     # When we have a remote URL, let's pre-populate the index.html page
     # with a view of the notebook.
@@ -167,7 +179,7 @@ def notebook_page_template(
     )
     html = html.replace("{{ server_token }}", str(server_token))
 
-    html = _replace_asset_urls(html, asset_url)
+    html = _replace_asset_urls(html, absolute_base_url, asset_url)
 
     html = html.replace(
         MOUNT_CONFIG_TEMPLATE,
@@ -316,7 +328,7 @@ def static_notebook_template(
     )
 
     # Replace all relative href and src with absolute URL
-    html = _replace_asset_urls(html, asset_url)
+    html = _replace_asset_urls(html, "", asset_url)
 
     # Append to head
     html = html.replace("</head>", f"{static_block}</head>")
@@ -484,7 +496,18 @@ def _inject_custom_css_for_config(
     return html.replace("</head>", f"{css_block}</head>")
 
 
-def _replace_asset_urls(html: str, asset_url: Optional[str]) -> str:
+def _format_base_href(base_url: str, absolute_base_url: str) -> str:
+    """Ensure the base href is absolute and normalized with trailing slash."""
+    href = absolute_base_url or base_url or ""
+    href = href.rstrip("/")
+    if not href:
+        return "/"
+    return f"{href}/"
+
+
+def _replace_asset_urls(
+    html: str, absolute_base_url: str, asset_url: Optional[str]
+) -> str:
     """Replace asset URLs with the given asset URL.
 
     These are naturally relative URLs. This can be used to load assets
@@ -492,15 +515,32 @@ def _replace_asset_urls(html: str, asset_url: Optional[str]) -> str:
 
     The asset URL can be parameterized with {version}
     """
-    if asset_url is None:
+    if asset_url is not None:
+        if "{version}" in asset_url:
+            asset_url = asset_url.replace("{version}", __version__)
+
+        return (
+            html.replace(
+                "href='./", f"crossorigin='anonymous' href='{asset_url}/"
+            )
+            .replace(
+                "src='./", f"crossorigin='anonymous' src='{asset_url}/"
+            )
+            .replace(
+                'href="./', f'crossorigin="anonymous" href="{asset_url}/'
+            )
+            .replace(
+                'src="./', f'crossorigin="anonymous" src="{asset_url}/'
+            )
+        )
+
+    base_prefix = absolute_base_url.rstrip("/") if absolute_base_url else ""
+    if not base_prefix:
         return html
 
-    if "{version}" in asset_url:
-        asset_url = asset_url.replace("{version}", __version__)
-
     return (
-        html.replace("href='./", f"crossorigin='anonymous' href='{asset_url}/")
-        .replace("src='./", f"crossorigin='anonymous' src='{asset_url}/")
-        .replace('href="./', f'crossorigin="anonymous" href="{asset_url}/')
-        .replace('src="./', f'crossorigin="anonymous" src="{asset_url}/')
+        html.replace("href='./", f"href='{base_prefix}/")
+        .replace("src='./", f"src='{base_prefix}/")
+        .replace('href="./', f'href="{base_prefix}/')
+        .replace('src="./', f'src="{base_prefix}/')
     )

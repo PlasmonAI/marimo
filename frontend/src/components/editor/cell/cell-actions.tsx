@@ -3,13 +3,7 @@
 import { CommandList } from "cmdk";
 import { useAtomValue } from "jotai";
 /* Copyright 2024 Marimo. All rights reserved. */
-import React, {
-  Fragment,
-  type PropsWithChildren,
-  useImperativeHandle,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useImperativeHandle, useMemo, useState } from "react";
 import {
   renderMinimalShortcut,
   renderShortcut,
@@ -43,7 +37,7 @@ import {
 } from "../actions/useCellActionButton";
 
 interface Props extends CellActionButtonProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
   showTooltip?: boolean;
 }
 
@@ -150,11 +144,8 @@ const CellActionsDropdownInternal = (
     <Popover open={open} onOpenChange={setOpen}>
       <TooltipRoot delayDuration={200} disableHoverableContent={true}>
         {!open && tooltipContent}
-        {/* This creates a warning in React due to nested <button> elements.
-        Adding asChild could fix this, but it also changes the styling (is hidden) of the button when
-        the Popover is open. */}
-        <TooltipTrigger>
-          <PopoverTrigger className="flex">{children}</PopoverTrigger>
+        <TooltipTrigger asChild={true}>
+          <PopoverTrigger asChild={true}>{children}</PopoverTrigger>
         </TooltipTrigger>
       </TooltipRoot>
       {content}
@@ -167,7 +158,7 @@ export const CellActionsDropdown = React.memo(
 );
 
 export const ConnectionCellActionsDropdown = React.memo(
-  ({ children, cellId }: PropsWithChildren<{ cellId: CellId }>) => {
+  ({ children, cellId }: { children: React.ReactElement; cellId: CellId }) => {
     const state = useAtomValue(
       useMemo(() => cellFocusDetailsAtom(cellId), [cellId]),
     );

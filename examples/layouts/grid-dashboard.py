@@ -15,7 +15,7 @@
 
 import marimo
 
-__generated_with = "0.17.4"
+__generated_with = "0.17.8"
 app = marimo.App(
     width="medium",
     layout_file="layouts/grid-dashboard.grid.json",
@@ -32,8 +32,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        rf"""
+    mo.md(rf"""
     /// TIP 
 
     "This notebook is best viewed as an app."
@@ -42,8 +41,7 @@ def _(mo):
 
     or hit `Cmd/Ctrl+.` or click the "app view" button in the bottom right.
     ///
-    """
-    )
+    """)
     return
 
 

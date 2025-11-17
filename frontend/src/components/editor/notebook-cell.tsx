@@ -926,6 +926,7 @@ const CellToolbar = memo(
               variant={"green"}
               tooltip={null}
               data-testid="cell-actions-button"
+              className="flex"
             >
               <MoreHorizontalIcon strokeWidth={1.5} />
             </ToolbarItem>

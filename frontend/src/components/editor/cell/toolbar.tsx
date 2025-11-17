@@ -33,44 +33,57 @@ interface ToolbarItemProps
   disabled?: boolean;
 }
 
-export const ToolbarItem: React.FC<ToolbarItemProps> = ({
-  children,
-  tooltip,
-  disabled = false,
-  variant,
-  ...rest
-}) => {
-  const content = (
-    <button
-      disabled={disabled}
-      {...rest}
-      onClick={(evt) => {
-        if (!disabled) {
-          rest.onClick?.(evt);
-        }
-      }}
-      // Prevent focus on the toolbar after clicking
-      onMouseDown={Events.preventFocus}
-      className={cn(toolbarItemVariants({ variant }), rest.className)}
-    >
-      {children}
-    </button>
-  );
-
-  if (tooltip) {
-    return (
-      <Tooltip
-        content={tooltip}
-        side="top"
-        delayDuration={200}
-        usePortal={false}
+export const ToolbarItem = React.forwardRef<HTMLButtonElement, ToolbarItemProps>(
+  (
+    {
+      children,
+      tooltip,
+      disabled = false,
+      variant,
+      className,
+      onClick,
+      onMouseDown,
+      ...rest
+    },
+    ref,
+  ) => {
+    const content = (
+      <button
+        ref={ref}
+        disabled={disabled}
+        {...rest}
+        onClick={(evt) => {
+          if (!disabled) {
+            onClick?.(evt);
+          }
+        }}
+        onMouseDown={(evt) => {
+          // Prevent focus on the toolbar after clicking
+          Events.preventFocus(evt);
+          onMouseDown?.(evt);
+        }}
+        className={cn(toolbarItemVariants({ variant }), className)}
       >
-        {content}
-      </Tooltip>
+        {children}
+      </button>
     );
-  }
-  return content;
-};
+
+    if (tooltip) {
+      return (
+        <Tooltip
+          content={tooltip}
+          side="top"
+          delayDuration={200}
+          usePortal={false}
+        >
+          {content}
+        </Tooltip>
+      );
+    }
+    return content;
+  },
+);
+ToolbarItem.displayName = "ToolbarItem";
 
 interface ToolbarProps {
   className?: string;

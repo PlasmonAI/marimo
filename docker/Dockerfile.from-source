@@ -1,10 +1,8 @@
 # syntax=docker/dockerfile:1.12
 FROM python:3.13-slim AS runtime-base
 
-# Provide uv/uvx for dependency management
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Create non-root user early so future layers can chown in one go
 RUN useradd -m appuser
 
 WORKDIR /app
@@ -16,35 +14,39 @@ ENV MARIMO_SKIP_UPDATE_CHECK=1 \
     PORT=8080 \
     HOST=0.0.0.0
 
-# Ship tutorials for quick access
 COPY --chown=appuser:appuser marimo/_tutorials tutorials
 RUN rm -rf tutorials/__init__.py
 
 EXPOSE $PORT
 
+# Stage that carries the source tree for installs
+FROM runtime-base AS source-base
+COPY marimo /src/marimo
+COPY pyproject.toml README.md LICENSE /src/
+
 # ---- Slim variant ----
-FROM runtime-base AS slim
-ARG marimo_version=0.12.8
+FROM source-base AS slim
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install --no-cache-dir "marimo==${marimo_version}"
+    cd /src && \
+    uv pip install --no-cache-dir . && \
+    rm -rf /src
 USER appuser
 CMD ["sh", "-c", "marimo edit --no-token -p $PORT --host $HOST"]
 
 # ---- Data variant ----
-FROM runtime-base AS data
-ARG marimo_version=0.12.8
+FROM source-base AS data
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install --no-cache-dir \
-      "marimo[recommended,lsp]==${marimo_version}" \
-      altair pandas numpy
+    cd /src && \
+    uv pip install --no-cache-dir ".[recommended,lsp]" altair pandas numpy && \
+    rm -rf /src
 USER appuser
 CMD ["sh", "-c", "marimo edit --no-token -p $PORT --host $HOST"]
 
 # ---- SQL variant ----
-FROM runtime-base AS sql
-ARG marimo_version=0.12.8
+FROM source-base AS sql
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install --no-cache-dir \
-      "marimo[recommended,lsp,sql]==${marimo_version}"
+    cd /src && \
+    uv pip install --no-cache-dir ".[recommended,lsp,sql]" && \
+    rm -rf /src
 USER appuser
 CMD ["sh", "-c", "marimo edit --no-token -p $PORT --host $HOST"]

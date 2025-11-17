@@ -3,7 +3,7 @@
 import { codecovVitePlugin } from "@codecov/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { JSDOM } from "jsdom";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, type IndexHtmlTransformContext, type Plugin } from "vite";
 import topLevelAwait from "vite-plugin-top-level-await";
 import wasm from "vite-plugin-wasm";
 
@@ -17,6 +17,17 @@ const isPyodide = process.env.PYODIDE === "true";
 console.log("Building environment:", process.env.NODE_ENV);
 
 const htmlDevPlugin = (): Plugin => {
+  const resolveDevOrigin = (ctx: IndexHtmlTransformContext) => {
+    const serverConfig = ctx.server?.config.server ?? {};
+    const protocol = serverConfig.https ? "https" : "http";
+    let host = typeof serverConfig.host === "string" ? serverConfig.host : "localhost";
+    if (host === "0.0.0.0" || host === "::") {
+      host = "localhost";
+    }
+    const port = serverConfig.port ?? 5173;
+    return `${protocol}://${host}:${port}`;
+  };
+
   return {
     apply: "serve",
     name: "html-transform",
@@ -181,6 +192,30 @@ If the server is already running, make sure it is using port ${SERVER_PORT} with
         }
         devDoc.head.append(element);
       });
+
+      // Copy <base> tag so relative asset URLs honor server base_url
+      const serverBase = serverDoc.querySelector("base");
+      if (serverBase) {
+        const devBase = devDoc.querySelector("base");
+        const baseClone = serverBase.cloneNode(true) as HTMLBaseElement;
+        const href = baseClone.getAttribute("href") ?? "/";
+        const devOrigin = resolveDevOrigin(ctx);
+        try {
+          const parsed = new URL(href, devOrigin);
+          let pathname = parsed.pathname;
+          if (!pathname.endsWith("/")) {
+            pathname = `${pathname}/`;
+          }
+          baseClone.setAttribute("href", `${devOrigin}${pathname}`);
+        } catch {
+          baseClone.setAttribute("href", `${devOrigin}/`);
+        }
+        if (devBase) {
+          devBase.replaceWith(baseClone);
+        } else {
+          devDoc.head.prepend(baseClone);
+        }
+      }
 
       // Copy styles
       const styles = serverDoc.querySelectorAll("style");

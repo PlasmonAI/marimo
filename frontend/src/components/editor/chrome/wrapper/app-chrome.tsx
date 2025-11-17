@@ -251,10 +251,6 @@ export const AppChrome: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <PanelsWrapper>
       <PanelGroup autoSaveId="marimo:chrome:v1:l2" direction={"horizontal"}>
-        <TooltipProvider>
-          <Sidebar />
-        </TooltipProvider>
-        {helperPanel}
         <Panel id="app-chrome-body">
           <PanelGroup autoSaveId="marimo:chrome:v1:l1" direction="vertical">
             {appBodyPanel}

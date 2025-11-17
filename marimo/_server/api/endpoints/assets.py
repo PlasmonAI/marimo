@@ -76,6 +76,7 @@ FILE_QUERY_PARAM_KEY = "file"
 async def index(request: Request) -> HTMLResponse:
     app_state = AppState(request)
     index_html = root / "index.html"
+    absolute_base_url = _build_absolute_base_url(request, app_state.base_url)
 
     file_key = (
         app_state.query_params(FILE_QUERY_PARAM_KEY)
@@ -90,6 +91,7 @@ async def index(request: Request) -> HTMLResponse:
         html = home_page_template(
             html=html,
             base_url=app_state.base_url,
+            absolute_base_url=absolute_base_url,
             user_config=app_state.config_manager.get_user_config(),
             config_overrides=app_state.config_manager.get_config_overrides(),
             server_token=app_state.skew_protection_token,
@@ -106,6 +108,7 @@ async def index(request: Request) -> HTMLResponse:
         html = notebook_page_template(
             html=html,
             base_url=app_state.base_url,
+            absolute_base_url=absolute_base_url,
             user_config=config_manager.get_user_config(),
             config_overrides=config_manager.get_config_overrides(),
             server_token=app_state.skew_protection_token,
@@ -120,6 +123,15 @@ async def index(request: Request) -> HTMLResponse:
         html = _inject_service_worker(html, file_key)
 
     return HTMLResponse(html)
+
+
+def _build_absolute_base_url(request: Request, base_url: str) -> str:
+    """Combine the request origin with the configured base path."""
+    base = str(request.base_url)
+    base = base[:-1] if base.endswith("/") else base
+    if not base_url:
+        return base
+    return f"{base}/{base_url.lstrip('/')}"
 
 
 def _inject_service_worker(html: str, file_key: str) -> str:
