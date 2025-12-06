@@ -50,3 +50,43 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     rm -rf /src
 USER appuser
 CMD ["sh", "-c", "marimo edit --no-token -p $PORT --host $HOST"]
+
+# ---- Cloud variant (with FUSE-based cloud storage mounting) ----
+FROM source-base AS cloud
+
+# Install s3fs-fuse and dependencies for cloud storage mounting
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    s3fs \
+    fuse \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Allow non-root users to use FUSE
+RUN echo "user_allow_other" >> /etc/fuse.conf
+
+# Create mount point
+RUN mkdir -p /acuity && chown appuser:appuser /acuity
+
+# Install marimo with recommended packages plus cloud storage Python libraries
+RUN --mount=type=cache,target=/root/.cache/uv \
+    cd /src && \
+    uv pip install --no-cache-dir ".[recommended,lsp,sql]" \
+    s3fs fsspec gcsfs adlfs cloudpathlib boto3 && \
+    rm -rf /src
+
+# Copy entrypoint script
+COPY --chmod=755 docker/entrypoint-cloud.sh /entrypoint.sh
+
+# Environment variables for cloud storage configuration
+ENV CLOUD_STORAGE_TYPE="" \
+    CLOUD_STORAGE_BUCKET="" \
+    CLOUD_STORAGE_MOUNT="/acuity" \
+    CLOUD_STORAGE_OPTIONS=""
+
+# Note: Running with FUSE requires --cap-add SYS_ADMIN --device /dev/fuse
+# or --privileged flag when starting the container
+
+USER appuser
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["sh", "-c", "marimo edit --no-token -p $PORT --host $HOST"]
